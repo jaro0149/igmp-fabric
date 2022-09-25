@@ -94,7 +94,7 @@ internal sealed class Igmp<out T : Igmp<T>> constructor(buffer: PacketBuffer) : 
      * @return calculated [UShort] checksum value
      */
     fun calculateChecksum(): UShort {
-        var accumulation = sum(superBuffer, superOffset, size() shl 2)
+        var accumulation = sum(superBuffer, superOffset, size())
         accumulation -= superBuffer.getShort(checksumOffset).toInt() and 0xFFFF
         accumulation = (accumulation shr 16 and 0xFFFF) + (accumulation and 0xFFFF)
         return accumulation.inv().toUShort()

@@ -42,4 +42,11 @@ internal class IgmpV1MembershipReport(buffer: PacketBuffer) : IgmpV1<IgmpV1Membe
     override fun type(igmpType: IgmpType) = throw UnsupportedOperationException(
         "IGMPv1 Type of Membership Report message cannot be changed"
     )
+
+    override fun toString(): String {
+        return "IgmpV1MembershipReport(" +
+                "type=${type()}, " +
+                "checksum=${checksum()}," +
+                "groupAddress=${groupAddress()})"
+    }
 }

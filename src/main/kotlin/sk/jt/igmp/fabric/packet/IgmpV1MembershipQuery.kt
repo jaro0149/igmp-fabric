@@ -53,4 +53,11 @@ internal class IgmpV1MembershipQuery(buffer: PacketBuffer) : IgmpV1<IgmpV1Member
     override fun groupAddress(address: Inet4Address) = throw UnsupportedOperationException(
         "IGMPv1 Group Address cannot be set in the Membership Query message - it is always set to 0.0.0.0"
     )
+
+    override fun toString(): String {
+        return "IgmpV1MembershipQuery(" +
+                "type=${type()}, " +
+                "checksum=${checksum()}," +
+                "groupAddress=${groupAddress()})"
+    }
 }
