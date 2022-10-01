@@ -89,7 +89,7 @@ internal sealed class Igmp<out T : Igmp<T>> constructor(buffer: PacketBuffer) : 
     }
 
     /**
-     * Calculattion of the checksum from the IGMP message and payload.
+     * Calculation of the checksum from the IGMP message and payload.
      *
      * @return calculated [UShort] checksum value
      */

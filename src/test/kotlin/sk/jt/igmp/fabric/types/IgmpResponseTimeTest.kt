@@ -21,33 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package sk.jt.igmp.fabric.packet
+package sk.jt.igmp.fabric.types
 
-import pcap.spi.PacketBuffer
-import sk.jt.igmp.fabric.types.IgmpResponseTime
-import sk.jt.igmp.fabric.types.IgmpResponseTime.Companion.ZERO_RESPONSE_TIME
-import sk.jt.igmp.fabric.types.IgmpType
-import sk.jt.igmp.fabric.types.IgmpType.LEAVE_GROUP
+import java.math.BigDecimal
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Test
 
-/**
- * IGMPv2 leave group message. Type is set to [IgmpType.LEAVE_GROUP] and response time is set to 0.
- * Group address is configurable.
- *
- * @param buffer packet payload
- * @constructor creation of IGMPv2 leave group message
- */
-internal class IgmpV2LeaveGroup(buffer: PacketBuffer) : IgmpV2<IgmpV2LeaveGroup>(buffer) {
+internal class IgmpResponseTimeTest {
 
-    init {
-        super.type(LEAVE_GROUP)
-        super.maxResponseTime(ZERO_RESPONSE_TIME)
+    @Test
+    fun createResponseTime_fromSeconds() {
+        val time = BigDecimal("15.5")
+        val responseTime = IgmpResponseTime.createResponseTime(time)
+        assertEquals(0x9b.toUByte(), responseTime.value)
+        assertEquals(time, responseTime.seconds())
     }
 
-    override fun type(igmpType: IgmpType) = throw UnsupportedOperationException(
-        "IGMPv2 Type of Leave Group message cannot be changed"
-    )
+    @Test
+    fun createResponseTime_fromSeconds_invalidScale() {
+        assertThrows(IllegalArgumentException::class.java) {
+            IgmpResponseTime.createResponseTime(BigDecimal("10.27"))
+        }
+    }
 
-    override fun maxResponseTime(responseTime: IgmpResponseTime) = throw UnsupportedOperationException(
-        "IGMPv2 Max. Response Time cannot be set in the Leave Group message - it is always set to 0"
-    )
+    @Test
+    fun createResponseTime_fromSeconds_outOfRange() {
+        assertThrows(IllegalArgumentException::class.java) {
+            IgmpResponseTime.createResponseTime(BigDecimal("26"))
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            IgmpResponseTime.createResponseTime(BigDecimal("-1"))
+        }
+    }
 }

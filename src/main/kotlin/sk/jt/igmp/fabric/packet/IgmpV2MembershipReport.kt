@@ -40,14 +40,14 @@ internal class IgmpV2MembershipReport(buffer: PacketBuffer) : IgmpV2<IgmpV2Membe
 
     init {
         super.type(IGMPV2_MEMBERSHIP_REPORT)
-        super.responseTime(ZERO_RESPONSE_TIME)
+        super.maxResponseTime(ZERO_RESPONSE_TIME)
     }
 
     override fun type(igmpType: IgmpType) = throw UnsupportedOperationException(
         "IGMPv2 Type of Membership Report message cannot be changed"
     )
 
-    override fun responseTime(responseTime: IgmpResponseTime) = throw UnsupportedOperationException(
-        "IGMPv2 Response Time cannot be set in the Membership Report message - it is always set to 0"
+    override fun maxResponseTime(responseTime: IgmpResponseTime) = throw UnsupportedOperationException(
+        "IGMPv2 Max. Response Time cannot be set in the Membership Report message - it is always set to 0"
     )
 }

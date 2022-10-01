@@ -64,7 +64,7 @@ internal sealed class IgmpV2<out T : Igmp<T>>(buffer: PacketBuffer) : Igmp<T>(bu
      *
      * @return [IgmpResponseTime]
      */
-    fun responseTime() = createResponseTime(superBuffer.getByte(responseTimeOffset).toUByte())
+    fun maxResponseTime() = createResponseTime(superBuffer.getByte(responseTimeOffset).toUByte())
 
     /**
      * In a Membership Query message, the group address field is set to zero
@@ -79,12 +79,12 @@ internal sealed class IgmpV2<out T : Igmp<T>>(buffer: PacketBuffer) : Igmp<T>(bu
     fun groupAddress() = superBuffer.getInt(groupAddressOffset).toIpv4Address()
 
     /**
-     * Set response time.
+     * Set maximum response time.
      *
      * @param responseTime [IgmpResponseTime]
      * @return [T]
      */
-    open fun responseTime(responseTime: IgmpResponseTime): T =
+    open fun maxResponseTime(responseTime: IgmpResponseTime): T =
         superBuffer.setByte(responseTimeOffset, responseTime.value.toInt()).let {
             @Suppress("UNCHECKED_CAST")
             return this as T
