@@ -115,7 +115,7 @@ internal class IgmpV3PacketTest : IgmpPacketTest {
             .maxResponseCode(createResponseCode(BigDecimal("8.5")))
             .groupAddress(getByName("192.168.224.100") as Inet4Address)
             .sourceAddresses(sourceAddresses)
-        membershipQuery.checksum(membershipQuery.calculateChecksum())
+            .addChecksum()
 
         assertEquals(MEMBERSHIP_QUERY, membershipQuery.type())
         assertEquals(0x694e.toUShort(), membershipQuery.checksum())
@@ -261,7 +261,7 @@ internal class IgmpV3PacketTest : IgmpPacketTest {
         )
         val membershipReport = createIgmpMessage(IgmpV3MembershipReport::class.java, 44)
             .groupRecords(groupRecords)
-        membershipReport.checksum(membershipReport.calculateChecksum())
+            .addChecksum()
 
         assertEquals(IGMPV3_MEMBERSHIP_REPORT, membershipReport.type())
         assertEquals(0x751.toUShort(), membershipReport.checksum())

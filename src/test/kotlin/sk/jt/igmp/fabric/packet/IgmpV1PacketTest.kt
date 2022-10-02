@@ -65,7 +65,7 @@ internal class IgmpV1PacketTest : IgmpPacketTest {
     @Test
     fun createMembershipQuery() {
         val membershipQuery = createIgmpMessage(IgmpV1MembershipQuery::class.java, 8)
-        membershipQuery.checksum(membershipQuery.calculateChecksum())
+            .addChecksum()
 
         assertEquals(MEMBERSHIP_QUERY, membershipQuery.type())
         assertEquals(61183u.toUShort(), membershipQuery.checksum())
@@ -85,8 +85,8 @@ internal class IgmpV1PacketTest : IgmpPacketTest {
     @Test
     fun createMembershipReport() {
         val membershipReport = createIgmpMessage(IgmpV1MembershipReport::class.java, 8)
-        membershipReport.groupAddress(getByName("224.0.0.252") as Inet4Address)
-        membershipReport.checksum(membershipReport.calculateChecksum())
+            .groupAddress(getByName("224.0.0.252") as Inet4Address)
+            .addChecksum()
 
         assertEquals(IGMPV1_MEMBERSHIP_REPORT, membershipReport.type())
         assertEquals(3331u.toUShort(), membershipReport.checksum())

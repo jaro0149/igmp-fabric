@@ -79,12 +79,11 @@ internal sealed class Igmp<out T : Igmp<T>> constructor(buffer: PacketBuffer) : 
     }
 
     /**
-     * Set checksum of the IGMP message.
+     * Set calculated checksum to the IGMP message.
      *
-     * @param checksum [UShort] value
      * @return [T]
      */
-    fun checksum(checksum: UShort): T = superBuffer.setShort(checksumOffset, checksum.toInt()).let {
+    fun addChecksum(): T = superBuffer.setShort(checksumOffset, calculateChecksum().toInt()).let {
         @Suppress("UNCHECKED_CAST") return this as T
     }
 

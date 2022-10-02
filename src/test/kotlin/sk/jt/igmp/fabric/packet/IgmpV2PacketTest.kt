@@ -103,10 +103,10 @@ internal class IgmpV2PacketTest : IgmpPacketTest {
 
     @Test
     fun createLeaveGroup() {
-        val leaveGroup = createIgmpMessage(IgmpV2LeaveGroup::class.java, 8)
         val groupAddress = getByName("239.255.255.250") as Inet4Address
-        leaveGroup.groupAddress(groupAddress)
-        leaveGroup.checksum(leaveGroup.calculateChecksum())
+        val leaveGroup = createIgmpMessage(IgmpV2LeaveGroup::class.java, 8)
+            .groupAddress(groupAddress)
+            .addChecksum()
 
         assertEquals(LEAVE_GROUP, leaveGroup.type())
         assertEquals(0xf904.toUShort(), leaveGroup.checksum())
@@ -120,7 +120,7 @@ internal class IgmpV2PacketTest : IgmpPacketTest {
         val groupAddress = getByName("224.0.0.1") as Inet4Address
         val membershipReport = createIgmpMessage(IgmpV2MembershipReport::class.java, 8)
             .groupAddress(groupAddress)
-        membershipReport.checksum(membershipReport.calculateChecksum())
+            .addChecksum()
 
         assertEquals(IGMPV2_MEMBERSHIP_REPORT, membershipReport.type())
         assertEquals(0x09fe.toUShort(), membershipReport.checksum())
@@ -135,7 +135,7 @@ internal class IgmpV2PacketTest : IgmpPacketTest {
         val membershipQuery = createIgmpMessage(IgmpV2MembershipQuery::class.java, 8)
             .groupAddress(groupAddress)
             .maxResponseTime(createResponseTime(BigDecimal("11.1")))
-        membershipQuery.checksum(membershipQuery.calculateChecksum())
+            .addChecksum()
 
         assertEquals(MEMBERSHIP_QUERY, membershipQuery.type())
         assertEquals(0x0e8f.toUShort(), membershipQuery.checksum())
