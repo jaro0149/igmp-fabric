@@ -94,4 +94,8 @@ class IgmpMaxResponseCode private constructor(code: UByte) : IgmpMantExpCode(cod
     }
 
     override fun seconds() = super.time().divideBy10()
+
+    override fun toString() = "IgmpMaxResponseCode(" +
+            "code=$code, " +
+            "seconds=${seconds()})"
 }

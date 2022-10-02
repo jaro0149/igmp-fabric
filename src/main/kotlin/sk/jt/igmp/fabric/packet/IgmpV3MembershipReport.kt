@@ -96,11 +96,15 @@ import sk.jt.igmp.fabric.types.IgmpType.IGMPV3_MEMBERSHIP_REPORT
  */
 internal class IgmpV3MembershipReport(buffer: PacketBuffer) : IgmpV3<IgmpV3MembershipReport>(buffer) {
 
-    private val numberOfGroupRecordsOffset = typeOffset + 6
+    private val reservedOffset1 = typeOffset + 1
+    private val reservedOffset2 = checksumOffset + 2
+    private val numberOfGroupRecordsOffset = reservedOffset2 + 2
     private val groupRecordOffset = numberOfGroupRecordsOffset + 2
 
     init {
         super.type(IGMPV3_MEMBERSHIP_REPORT)
+        superBuffer.setByte(reservedOffset1, 0)
+        superBuffer.setShort(reservedOffset2, 0)
     }
 
     override fun type(igmpType: IgmpType) = throw UnsupportedOperationException(
@@ -145,7 +149,7 @@ internal class IgmpV3MembershipReport(buffer: PacketBuffer) : IgmpV3<IgmpV3Membe
 
             val auxiliaryDataOffset = sourceAddressOffset + (numberOfSources * 4)
             val auxiliaryData = ByteArray(auxDataLen.toInt() * 4)
-            superBuffer.getBytes(auxiliaryDataOffset, auxiliaryData, 0, auxDataLen)
+            superBuffer.getBytes(auxiliaryDataOffset, auxiliaryData, 0, auxDataLen * 4)
 
             groupRecords.add(IgmpGroupRecord(recordType, multicastAddress, sourceAddresses, createWords(auxiliaryData)))
             recordTypeOffset = auxiliaryDataOffset + (auxDataLen * 4)
@@ -169,7 +173,8 @@ internal class IgmpV3MembershipReport(buffer: PacketBuffer) : IgmpV3<IgmpV3Membe
             val auxiliaryDataOffset = sourceAddressOffset + (record.sourceAddresses.size * 4)
 
             superBuffer.setByte(recordTypeOffset, record.recordType.type.toInt())
-            superBuffer.setByte(numberOfSourcesOffset, record.auxiliaryData.size / 4)
+            superBuffer.setByte(auxDataLenOffset, record.auxiliaryData.size)
+            superBuffer.setShort(numberOfSourcesOffset, record.sourceAddresses.size)
             superBuffer.setBytes(multicastAddressOffset, record.multicastAddress.address)
 
             var addressOffset = sourceAddressOffset
@@ -191,9 +196,10 @@ internal class IgmpV3MembershipReport(buffer: PacketBuffer) : IgmpV3<IgmpV3Membe
     }
 
     override fun size(): Int {
+        val numberOfGroupRecords = superBuffer.getShort(superBuffer.readerIndex() + 6)
         var groupRecordsSize = 0
-        var recordTypeOffset = groupRecordOffset
-        for (groupRecordIndex in 0 until numberOfGroupRecords().toInt()) {
+        var recordTypeOffset = superBuffer.readerIndex() + 8
+        for (groupRecordIndex in 0 until numberOfGroupRecords) {
             val auxDataLenOffset = recordTypeOffset + 1
             val numberOfSourcesOffset = auxDataLenOffset + 1
             val auxDataLen = superBuffer.getByte(auxDataLenOffset).toInt()
@@ -205,4 +211,9 @@ internal class IgmpV3MembershipReport(buffer: PacketBuffer) : IgmpV3<IgmpV3Membe
         }
         return 8 + groupRecordsSize
     }
+
+    override fun toString() = "IgmpV3MembershipReport(" +
+            "type=${type()}, " +
+            "checksum=${checksum()}, " +
+            "groupRecords=${groupRecords()})"
 }

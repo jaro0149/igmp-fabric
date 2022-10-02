@@ -43,7 +43,7 @@ import sk.jt.igmp.fabric.types.IgmpMantExpCode.Companion.MAX_MANT
  * @property code byte representation of code
  * @constructor creation of [IgmpQuerierQueryIntervalCode]
  */
-class IgmpQuerierQueryIntervalCode(code: UByte) : IgmpMantExpCode(code) {
+class IgmpQuerierQueryIntervalCode private constructor(code: UByte) : IgmpMantExpCode(code) {
 
     companion object {
         private val MIN_INTERVAL_SEC = 0u
@@ -85,4 +85,8 @@ class IgmpQuerierQueryIntervalCode(code: UByte) : IgmpMantExpCode(code) {
     }
 
     override fun seconds() = super.time()
+
+    override fun toString() = "IgmpQuerierQueryIntervalCode(" +
+            "code=$code, " +
+            "seconds=${seconds()})"
 }

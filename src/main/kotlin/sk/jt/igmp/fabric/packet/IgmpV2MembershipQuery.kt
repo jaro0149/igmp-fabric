@@ -43,4 +43,10 @@ internal class IgmpV2MembershipQuery(buffer: PacketBuffer) : IgmpV2<IgmpV2Member
     override fun type(igmpType: IgmpType) = throw UnsupportedOperationException(
         "IGMPv2 Type of Membership Query message cannot be changed"
     )
+
+    override fun toString() = "IgmpV2MembershipQuery(" +
+            "type=${type()}, " +
+            "maxResponseTime=${maxResponseTime()}, " +
+            "checksum=${checksum()}, " +
+            "groupAddress=${groupAddress()})"
 }

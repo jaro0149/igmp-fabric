@@ -49,7 +49,7 @@ abstract class IgmpMantExpCode(val code: UByte) {
         fun createCode(mant: UByte, exp: UByte): UByte {
             require(mant <= MAX_MANT) { "IGMP 'mant' must be from the interval <0, $MAX_MANT>" }
             require(exp <= MAX_EXP) { "IGMP 'exp' must be from the interval <0, $MAX_EXP>" }
-            return ((mant or 0x10u).toUInt() shr (exp + 3u).toInt()).toUByte()
+            return ((exp or 0x08u).toUInt() shl 4).toUByte() or mant
         }
     }
 

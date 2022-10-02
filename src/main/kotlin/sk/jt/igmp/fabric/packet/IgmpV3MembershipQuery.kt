@@ -24,6 +24,7 @@
 package sk.jt.igmp.fabric.packet
 
 import java.net.Inet4Address
+import kotlin.experimental.and
 import pcap.spi.PacketBuffer
 import sk.jt.igmp.fabric.packet.IgmpPacketUtils.Companion.bit
 import sk.jt.igmp.fabric.packet.IgmpPacketUtils.Companion.toIpv4Address
@@ -79,6 +80,10 @@ internal class IgmpV3MembershipQuery(buffer: PacketBuffer) : IgmpV3<IgmpV3Member
 
     init {
         super.type(MEMBERSHIP_QUERY)
+        superBuffer.setByte(
+            suppressAndRobustnessOffset,
+            (superBuffer.getByte(suppressAndRobustnessOffset) and 0x1F).toInt()
+        )
     }
 
     /**
@@ -160,7 +165,7 @@ internal class IgmpV3MembershipQuery(buffer: PacketBuffer) : IgmpV3<IgmpV3Member
     fun numberOfSources() = superBuffer.getShort(numberOfSourcesOffset).toUShort()
 
     /**
-     * The Source Address [i] fields are a vector of n IP unicast addresses,
+     * The Source Address fields are a vector of n IP unicast addresses,
      * where n is the value in the Number of Sources (N) field.
      *
      * @return [List] of [Inet4Address]s
@@ -200,13 +205,13 @@ internal class IgmpV3MembershipQuery(buffer: PacketBuffer) : IgmpV3<IgmpV3Member
      * @return [IgmpV3MembershipQuery]
      */
     fun suppressRouterSideProcessing(suppress: Boolean): IgmpV3MembershipQuery {
-        var value = superBuffer.getByte(sourceAddressOffset).toUByte()
+        var value = superBuffer.getByte(suppressAndRobustnessOffset).toUByte()
         value = if (suppress) {
             value or 0x08u
         } else {
             value and 0xF7u
         }
-        superBuffer.setByte(maxResponseCodeOffset, value.toInt())
+        superBuffer.setByte(suppressAndRobustnessOffset, value.toInt())
         return this
     }
 
@@ -217,9 +222,9 @@ internal class IgmpV3MembershipQuery(buffer: PacketBuffer) : IgmpV3<IgmpV3Member
      * @return [IgmpV3MembershipQuery]
      */
     fun querierRobustnessVariable(variable: IgmpQuerierRobustnessVariable): IgmpV3MembershipQuery {
-        var value = superBuffer.getByte(sourceAddressOffset).toUByte() and 0xF8u
+        var value = superBuffer.getByte(suppressAndRobustnessOffset).toUByte() and 0xF8u
         value = value or variable.value
-        superBuffer.setByte(sourceAddressOffset, value.toInt())
+        superBuffer.setByte(suppressAndRobustnessOffset, value.toInt())
         return this
     }
 
@@ -231,7 +236,7 @@ internal class IgmpV3MembershipQuery(buffer: PacketBuffer) : IgmpV3<IgmpV3Member
      */
     fun querierQueryIntervalCode(intervalCode: IgmpQuerierQueryIntervalCode): IgmpV3MembershipQuery =
         superBuffer.setByte(
-            sourceAddressOffset, intervalCode.code.toInt()
+            queryIntervalCodeOffset, intervalCode.code.toInt()
         ).let { this }
 
     /**
@@ -254,5 +259,15 @@ internal class IgmpV3MembershipQuery(buffer: PacketBuffer) : IgmpV3<IgmpV3Member
         "IGMPv3 Type of Membership Query message cannot be changed"
     )
 
-    override fun size() = 12 + (numberOfSources().toInt() * 4)
+    override fun size() = 12 + (superBuffer.getShort(superBuffer.readerIndex() + 10).toInt() * 4)
+
+    override fun toString() = "IgmpV3MembershipQuery(" +
+            "type=${type()}, " +
+            "maxResponseCode=${maxResponseCode()}, " +
+            "checksum=${checksum()}, " +
+            "groupAddress=${groupAddress()}, " +
+            "suppressRouterSideProcessing=${suppressRouterSideProcessing()}, " +
+            "querierRobustnessVariable=${querierRobustnessVariable()}, " +
+            "querierQueryIntervalCode=${querierQueryIntervalCode()}, " +
+            "sourceAddresses=${sourceAddresses()})"
 }

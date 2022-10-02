@@ -48,4 +48,6 @@ class IgmpQuerierRobustnessVariable private constructor(val value: UByte) {
             return IgmpQuerierRobustnessVariable(variable)
         }
     }
+
+    override fun toString() = "IgmpQuerierRobustnessVariable(value=$value)"
 }

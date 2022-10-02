@@ -50,4 +50,10 @@ internal class IgmpV2LeaveGroup(buffer: PacketBuffer) : IgmpV2<IgmpV2LeaveGroup>
     override fun maxResponseTime(responseTime: IgmpResponseTime) = throw UnsupportedOperationException(
         "IGMPv2 Max. Response Time cannot be set in the Leave Group message - it is always set to 0"
     )
+
+    override fun toString() = "IgmpV2LeaveGroup(" +
+            "type=${type()}, " +
+            "maxResponseTime=${maxResponseTime()}, " +
+            "checksum=${checksum()}, " +
+            "groupAddress=${groupAddress()})"
 }

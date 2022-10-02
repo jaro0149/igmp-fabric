@@ -21,30 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package sk.jt.igmp.fabric.packet
+package sk.jt.igmp.fabric.types
 
-import pcap.spi.PacketBuffer
-import sk.jt.igmp.fabric.types.IgmpType
-import sk.jt.igmp.fabric.types.IgmpType.IGMPV1_MEMBERSHIP_REPORT
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Test
+import sk.jt.igmp.fabric.types.IgmpQuerierRobustnessVariable.Companion.createQueryRobustnessVariable
 
-/**
- * IGMPvv membership report message. Type is set to [IgmpType.IGMPV1_MEMBERSHIP_REPORT]. Group address is configurable.
- *
- * @param buffer packet payload
- * @constructor creation of IGMPv1 membership report message
- */
-internal class IgmpV1MembershipReport(buffer: PacketBuffer) : IgmpV1<IgmpV1MembershipReport>(buffer) {
+internal class IgmpQuerierRobustnessVariableTest {
 
-    init {
-        super.type(IGMPV1_MEMBERSHIP_REPORT)
+    @Test
+    fun createQueryRobustnessVariable_invalidRange() {
+        assertThrows(IllegalArgumentException::class.java) {
+            createQueryRobustnessVariable(10u)
+        }
     }
 
-    override fun type(igmpType: IgmpType) = throw UnsupportedOperationException(
-        "IGMPv1 Type of Membership Report message cannot be changed"
-    )
-
-    override fun toString() = "IgmpV1MembershipReport(" +
-            "type=${type()}, " +
-            "checksum=${checksum()}, " +
-            "groupAddress=${groupAddress()})"
+    @Test
+    fun createQueryRobustnessVariable() {
+        val variable = createQueryRobustnessVariable(6u)
+        assertEquals(6u.toUByte(), variable.value)
+    }
 }

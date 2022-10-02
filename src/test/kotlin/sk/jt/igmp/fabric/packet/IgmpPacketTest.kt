@@ -61,6 +61,8 @@ internal interface IgmpPacketTest {
      */
     fun <T : Igmp<T>> createIgmpMessage(igmpType: Class<T>, capacity: Long): T {
         val frame = PCAP_SERVICE.allocate(PacketBuffer::class.java).capacity(capacity)
+        val zeroArray = ByteArray(capacity.toInt())
+        frame.setBytes(0, zeroArray)
         frame.writerIndex(frame.capacity())
         return frame.cast(igmpType)
     }

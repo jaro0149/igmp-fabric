@@ -80,4 +80,8 @@ class IgmpResponseTime private constructor(val value: UByte) {
      * @return [BigDecimal]
      */
     fun seconds() = valueOf(value.toLong()).divideBy10()
+
+    override fun toString() = "IgmpResponseTime(" +
+            "value=$value, " +
+            "seconds=${seconds()})"
 }

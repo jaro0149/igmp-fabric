@@ -50,4 +50,10 @@ internal class IgmpV2MembershipReport(buffer: PacketBuffer) : IgmpV2<IgmpV2Membe
     override fun maxResponseTime(responseTime: IgmpResponseTime) = throw UnsupportedOperationException(
         "IGMPv2 Max. Response Time cannot be set in the Membership Report message - it is always set to 0"
     )
+
+    override fun toString() = "IgmpV2MembershipReport(" +
+            "type=${type()}, " +
+            "maxResponseTime=${maxResponseTime()}, " +
+            "checksum=${checksum()}, " +
+            "groupAddress=${groupAddress()})"
 }

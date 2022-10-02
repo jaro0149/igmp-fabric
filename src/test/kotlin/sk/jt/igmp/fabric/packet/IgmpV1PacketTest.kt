@@ -24,11 +24,11 @@
 package sk.jt.igmp.fabric.packet
 
 import java.net.Inet4Address
-import java.net.Inet4Address.getByAddress
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import java.net.InetAddress.getByName
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import sk.jt.igmp.fabric.types.IgmpType.IGMPV1_MEMBERSHIP_REPORT
 import sk.jt.igmp.fabric.types.IgmpType.MEMBERSHIP_QUERY
@@ -39,8 +39,8 @@ internal class IgmpV1PacketTest : IgmpPacketTest {
     fun parseMembershipQuery() {
         val membershipQuery = parseIgmpMessage("/igmpv1/membership_query_02", IgmpV1MembershipQuery::class.java)
         assertEquals(MEMBERSHIP_QUERY, membershipQuery.type())
-        assertEquals(61183u, membershipQuery.checksum())
-        assertEquals(getByAddress(byteArrayOf(0, 0, 0, 0)), membershipQuery.groupAddress())
+        assertEquals(61183u.toUShort(), membershipQuery.checksum())
+        assertEquals(getByName("0.0.0.0"), membershipQuery.groupAddress())
         assertTrue(membershipQuery.isValidChecksum())
     }
 
@@ -48,8 +48,8 @@ internal class IgmpV1PacketTest : IgmpPacketTest {
     fun parseMembershipQuery_invalidChecksum() {
         val membershipQuery = parseIgmpMessage("/igmpv1/membership_query_01", IgmpV1MembershipQuery::class.java)
         assertEquals(MEMBERSHIP_QUERY, membershipQuery.type())
-        assertEquals(60415u, membershipQuery.checksum())
-        assertEquals(getByAddress(byteArrayOf(0, 0, 0, 0)), membershipQuery.groupAddress())
+        assertEquals(60415u.toUShort(), membershipQuery.checksum())
+        assertEquals(getByName("0.0.0.0"), membershipQuery.groupAddress())
         assertFalse(membershipQuery.isValidChecksum())
     }
 
@@ -57,8 +57,8 @@ internal class IgmpV1PacketTest : IgmpPacketTest {
     fun parseMembershipReport() {
         val membershipReport = parseIgmpMessage("/igmpv1/membership_report", IgmpV1MembershipReport::class.java)
         assertEquals(IGMPV1_MEMBERSHIP_REPORT, membershipReport.type())
-        assertEquals(3331u, membershipReport.checksum())
-        assertEquals(getByAddress(byteArrayOf(224.toByte(), 0, 0, 252.toByte())), membershipReport.groupAddress())
+        assertEquals(3331u.toUShort(), membershipReport.checksum())
+        assertEquals(getByName("224.0.0.252"), membershipReport.groupAddress())
         assertTrue(membershipReport.isValidChecksum())
     }
 
@@ -68,8 +68,8 @@ internal class IgmpV1PacketTest : IgmpPacketTest {
         membershipQuery.checksum(membershipQuery.calculateChecksum())
 
         assertEquals(MEMBERSHIP_QUERY, membershipQuery.type())
-        assertEquals(61183u, membershipQuery.checksum())
-        assertEquals(getByAddress(byteArrayOf(0, 0, 0, 0)), membershipQuery.groupAddress())
+        assertEquals(61183u.toUShort(), membershipQuery.checksum())
+        assertEquals(getByName("0.0.0.0"), membershipQuery.groupAddress())
         assertTrue(membershipQuery.isValidChecksum())
     }
 
@@ -78,19 +78,19 @@ internal class IgmpV1PacketTest : IgmpPacketTest {
         val membershipQuery = createIgmpMessage(IgmpV1MembershipQuery::class.java, 8)
 
         assertThrows(UnsupportedOperationException::class.java) {
-            membershipQuery.groupAddress(getByAddress(byteArrayOf(224.toByte(), 0, 0, 252.toByte())) as Inet4Address)
+            membershipQuery.groupAddress(getByName("224.0.0.252") as Inet4Address)
         }
     }
 
     @Test
     fun createMembershipReport() {
         val membershipReport = createIgmpMessage(IgmpV1MembershipReport::class.java, 8)
-        membershipReport.groupAddress(getByAddress(byteArrayOf(224.toByte(), 0, 0, 252.toByte())) as Inet4Address)
+        membershipReport.groupAddress(getByName("224.0.0.252") as Inet4Address)
         membershipReport.checksum(membershipReport.calculateChecksum())
 
         assertEquals(IGMPV1_MEMBERSHIP_REPORT, membershipReport.type())
-        assertEquals(3331u, membershipReport.checksum())
-        assertEquals(getByAddress(byteArrayOf(224.toByte(), 0, 0, 252.toByte())), membershipReport.groupAddress())
+        assertEquals(3331u.toUShort(), membershipReport.checksum())
+        assertEquals(getByName("224.0.0.252"), membershipReport.groupAddress())
         assertTrue(membershipReport.isValidChecksum())
     }
 }

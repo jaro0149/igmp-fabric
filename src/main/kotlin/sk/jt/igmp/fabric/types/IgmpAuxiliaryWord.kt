@@ -65,7 +65,7 @@ class IgmpAuxiliaryWord private constructor(val bytes: List<UByte>) {
                     words.add(IgmpAuxiliaryWord(buffer
                         .map { it.toUByte() }
                         .toList()))
-                    words.clear()
+                    buffer.clear()
                 }
             }
             return words
@@ -80,4 +80,6 @@ class IgmpAuxiliaryWord private constructor(val bytes: List<UByte>) {
     internal fun toByteArray() = bytes
         .map { it.toByte() }
         .toByteArray()
+
+    override fun toString() = "IgmpAuxiliaryWord(bytes=$bytes)"
 }
