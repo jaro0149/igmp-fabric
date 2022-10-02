@@ -82,4 +82,19 @@ class IgmpAuxiliaryWord private constructor(val bytes: List<UByte>) {
         .toByteArray()
 
     override fun toString() = "IgmpAuxiliaryWord(bytes=$bytes)"
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
+            return true
+        }
+        if (javaClass != other?.javaClass) {
+            return false
+        }
+        other as IgmpAuxiliaryWord
+        if (bytes != other.bytes) {
+            return false
+        }
+        return true
+    }
+
+    override fun hashCode() = bytes.hashCode()
 }
