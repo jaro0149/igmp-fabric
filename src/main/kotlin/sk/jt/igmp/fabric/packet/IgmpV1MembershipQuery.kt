@@ -23,8 +23,6 @@
  */
 package sk.jt.igmp.fabric.packet
 
-import java.net.Inet4Address
-import java.net.Inet4Address.getByAddress
 import pcap.spi.PacketBuffer
 import sk.jt.igmp.fabric.types.IgmpType
 import sk.jt.igmp.fabric.types.IgmpType.MEMBERSHIP_QUERY
@@ -37,21 +35,13 @@ import sk.jt.igmp.fabric.types.IgmpType.MEMBERSHIP_QUERY
  */
 internal class IgmpV1MembershipQuery(buffer: PacketBuffer) : IgmpV1<IgmpV1MembershipQuery>(buffer) {
 
-    companion object {
-        private val ALL_ZERO_ADDRESS = getByAddress(byteArrayOf(0, 0, 0, 0)) as Inet4Address
-    }
-
     init {
         super.type(MEMBERSHIP_QUERY)
-        super.groupAddress(ALL_ZERO_ADDRESS)
+        superBuffer.setInt(groupAddressOffset, 0)
     }
 
     override fun type(igmpType: IgmpType) = throw UnsupportedOperationException(
         "IGMPv1 Type of Membership Query message cannot be changed"
-    )
-
-    override fun groupAddress(address: Inet4Address) = throw UnsupportedOperationException(
-        "IGMPv1 Group Address cannot be set in the Membership Query message - it is always set to 0.0.0.0"
     )
 
     override fun toString() = "IgmpV1MembershipQuery(" +

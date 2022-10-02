@@ -23,6 +23,7 @@
  */
 package sk.jt.igmp.fabric.packet
 
+import java.net.Inet4Address
 import pcap.spi.PacketBuffer
 import sk.jt.igmp.fabric.types.IgmpType
 import sk.jt.igmp.fabric.types.IgmpType.IGMPV1_MEMBERSHIP_REPORT
@@ -42,6 +43,14 @@ internal class IgmpV1MembershipReport(buffer: PacketBuffer) : IgmpV1<IgmpV1Membe
     override fun type(igmpType: IgmpType) = throw UnsupportedOperationException(
         "IGMPv1 Type of Membership Report message cannot be changed"
     )
+
+    /**
+     * Set group address.
+     *
+     * @param address [Inet4Address]
+     * @return [IgmpV1MembershipReport]
+     */
+    fun groupAddress(address: Inet4Address) = superBuffer.setBytes(groupAddressOffset, address.address).let { this }
 
     override fun toString() = "IgmpV1MembershipReport(" +
             "type=${type()}, " +

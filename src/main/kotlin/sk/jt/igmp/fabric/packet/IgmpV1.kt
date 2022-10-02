@@ -46,7 +46,7 @@ import sk.jt.igmp.fabric.packet.IgmpPacketUtils.Companion.toIpv4Address
 internal sealed class IgmpV1<out T : Igmp<T>>(buffer: PacketBuffer) : Igmp<T>(buffer) {
 
     private val unusedOffset = typeOffset + 1
-    private val groupAddressOffset = checksumOffset + 2
+    protected val groupAddressOffset = checksumOffset + 2
 
     init {
         superBuffer.setByte(unusedOffset, 0)
@@ -61,17 +61,6 @@ internal sealed class IgmpV1<out T : Igmp<T>>(buffer: PacketBuffer) : Igmp<T>(bu
      * @return [Inet4Address]
      */
     fun groupAddress() = superBuffer.getInt(groupAddressOffset).toIpv4Address()
-
-    /**
-     * Set group address.
-     *
-     * @param address [Inet4Address]
-     * @return [T]
-     */
-    open fun groupAddress(address: Inet4Address): T = superBuffer.setBytes(groupAddressOffset, address.address).let {
-        @Suppress("UNCHECKED_CAST")
-        this as T
-    }
 
     override fun size() = 8
 }

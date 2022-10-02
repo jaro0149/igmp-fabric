@@ -27,7 +27,6 @@ import java.net.Inet4Address
 import java.net.InetAddress.getByName
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import sk.jt.igmp.fabric.types.IgmpType.IGMPV1_MEMBERSHIP_REPORT
@@ -71,15 +70,6 @@ internal class IgmpV1PacketTest : IgmpPacketTest {
         assertEquals(61183u.toUShort(), membershipQuery.checksum())
         assertEquals(getByName("0.0.0.0"), membershipQuery.groupAddress())
         assertTrue(membershipQuery.isValidChecksum())
-    }
-
-    @Test
-    fun createMembershipQuery_setInvalidField() {
-        val membershipQuery = createIgmpMessage(IgmpV1MembershipQuery::class.java, 8)
-
-        assertThrows(UnsupportedOperationException::class.java) {
-            membershipQuery.groupAddress(getByName("224.0.0.252") as Inet4Address)
-        }
     }
 
     @Test
