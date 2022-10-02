@@ -24,8 +24,6 @@
 package sk.jt.igmp.fabric.packet
 
 import pcap.spi.PacketBuffer
-import sk.jt.igmp.fabric.types.IgmpResponseTime
-import sk.jt.igmp.fabric.types.IgmpResponseTime.Companion.ZERO_RESPONSE_TIME
 import sk.jt.igmp.fabric.types.IgmpType
 import sk.jt.igmp.fabric.types.IgmpType.LEAVE_GROUP
 
@@ -40,15 +38,11 @@ internal class IgmpV2LeaveGroup(buffer: PacketBuffer) : IgmpV2<IgmpV2LeaveGroup>
 
     init {
         super.type(LEAVE_GROUP)
-        super.maxResponseTime(ZERO_RESPONSE_TIME)
+        superBuffer.setByte(responseTimeOffset, 0)
     }
 
     override fun type(igmpType: IgmpType) = throw UnsupportedOperationException(
         "IGMPv2 Type of Leave Group message cannot be changed"
-    )
-
-    override fun maxResponseTime(responseTime: IgmpResponseTime) = throw UnsupportedOperationException(
-        "IGMPv2 Max. Response Time cannot be set in the Leave Group message - it is always set to 0"
     )
 
     override fun toString() = "IgmpV2LeaveGroup(" +

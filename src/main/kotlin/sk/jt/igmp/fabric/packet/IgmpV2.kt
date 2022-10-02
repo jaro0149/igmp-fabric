@@ -48,7 +48,7 @@ import sk.jt.igmp.fabric.types.IgmpResponseTime.Companion.createResponseTime
  */
 internal sealed class IgmpV2<out T : Igmp<T>>(buffer: PacketBuffer) : Igmp<T>(buffer) {
 
-    private val responseTimeOffset = typeOffset + 1
+    protected val responseTimeOffset = typeOffset + 1
     private val groupAddressOffset = checksumOffset + 2
 
     /**
@@ -77,18 +77,6 @@ internal sealed class IgmpV2<out T : Igmp<T>>(buffer: PacketBuffer) : Igmp<T>(bu
      * @return [Inet4Address]
      */
     fun groupAddress() = superBuffer.getInt(groupAddressOffset).toIpv4Address()
-
-    /**
-     * Set maximum response time.
-     *
-     * @param responseTime [IgmpResponseTime]
-     * @return [T]
-     */
-    open fun maxResponseTime(responseTime: IgmpResponseTime): T =
-        superBuffer.setByte(responseTimeOffset, responseTime.value.toInt()).let {
-            @Suppress("UNCHECKED_CAST")
-            return this as T
-        }
 
     /**
      * Set group address.

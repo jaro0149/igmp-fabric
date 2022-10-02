@@ -24,8 +24,6 @@
 package sk.jt.igmp.fabric.packet
 
 import pcap.spi.PacketBuffer
-import sk.jt.igmp.fabric.types.IgmpResponseTime
-import sk.jt.igmp.fabric.types.IgmpResponseTime.Companion.ZERO_RESPONSE_TIME
 import sk.jt.igmp.fabric.types.IgmpType
 import sk.jt.igmp.fabric.types.IgmpType.IGMPV2_MEMBERSHIP_REPORT
 
@@ -40,15 +38,11 @@ internal class IgmpV2MembershipReport(buffer: PacketBuffer) : IgmpV2<IgmpV2Membe
 
     init {
         super.type(IGMPV2_MEMBERSHIP_REPORT)
-        super.maxResponseTime(ZERO_RESPONSE_TIME)
+        superBuffer.setByte(responseTimeOffset, 0)
     }
 
     override fun type(igmpType: IgmpType) = throw UnsupportedOperationException(
         "IGMPv2 Type of Membership Report message cannot be changed"
-    )
-
-    override fun maxResponseTime(responseTime: IgmpResponseTime) = throw UnsupportedOperationException(
-        "IGMPv2 Max. Response Time cannot be set in the Membership Report message - it is always set to 0"
     )
 
     override fun toString() = "IgmpV2MembershipReport(" +

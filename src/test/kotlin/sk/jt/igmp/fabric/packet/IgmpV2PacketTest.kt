@@ -24,12 +24,10 @@
 package sk.jt.igmp.fabric.packet
 
 import java.math.BigDecimal
-import java.math.BigDecimal.TEN
 import java.net.Inet4Address
 import java.net.Inet4Address.getByName
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import sk.jt.igmp.fabric.types.IgmpResponseTime.Companion.createResponseTime
@@ -83,22 +81,6 @@ internal class IgmpV2PacketTest : IgmpPacketTest {
         assertEquals(getByName("239.255.255.250"), membershipReport.groupAddress())
         assertEquals(0u.toUByte(), membershipReport.maxResponseTime().value)
         assertTrue(membershipReport.isValidChecksum())
-    }
-
-    @Test
-    fun createMembershipReport_setInvalidField() {
-        val membershipReport = createIgmpMessage(IgmpV2MembershipReport::class.java, 8)
-        assertThrows(UnsupportedOperationException::class.java) {
-            membershipReport.maxResponseTime(createResponseTime(TEN))
-        }
-    }
-
-    @Test
-    fun createLeaveGroup_setInvalidField() {
-        val leaveGroup = createIgmpMessage(IgmpV2LeaveGroup::class.java, 8)
-        assertThrows(UnsupportedOperationException::class.java) {
-            leaveGroup.maxResponseTime(createResponseTime(TEN))
-        }
     }
 
     @Test

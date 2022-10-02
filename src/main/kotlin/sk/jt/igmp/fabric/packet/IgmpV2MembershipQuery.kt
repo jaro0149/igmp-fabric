@@ -24,6 +24,7 @@
 package sk.jt.igmp.fabric.packet
 
 import pcap.spi.PacketBuffer
+import sk.jt.igmp.fabric.types.IgmpResponseTime
 import sk.jt.igmp.fabric.types.IgmpType
 import sk.jt.igmp.fabric.types.IgmpType.MEMBERSHIP_QUERY
 
@@ -43,6 +44,15 @@ internal class IgmpV2MembershipQuery(buffer: PacketBuffer) : IgmpV2<IgmpV2Member
     override fun type(igmpType: IgmpType) = throw UnsupportedOperationException(
         "IGMPv2 Type of Membership Query message cannot be changed"
     )
+
+    /**
+     * Set maximum response time.
+     *
+     * @param responseTime [IgmpResponseTime]
+     * @return [IgmpV2MembershipQuery]
+     */
+    fun maxResponseTime(responseTime: IgmpResponseTime) =
+        superBuffer.setByte(responseTimeOffset, responseTime.value.toInt()).let { this }
 
     override fun toString() = "IgmpV2MembershipQuery(" +
             "type=${type()}, " +
