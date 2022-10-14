@@ -47,7 +47,6 @@ internal class IgmpV2MembershipReport(buffer: PacketBuffer) : IgmpV2<IgmpV2Membe
 
     override fun toString() = "IgmpV2MembershipReport(" +
             "type=${type()}, " +
-            "maxResponseTime=${maxResponseTime()}, " +
             "checksum=${checksum()}, " +
             "groupAddress=${groupAddress()})"
 }

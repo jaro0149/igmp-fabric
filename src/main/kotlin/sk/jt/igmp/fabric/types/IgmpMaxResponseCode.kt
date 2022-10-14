@@ -53,8 +53,8 @@ import sk.jt.igmp.fabric.types.TypeUtils.Companion.multiplyWith10
 class IgmpMaxResponseCode private constructor(code: UByte) : IgmpMantExpCode(code) {
 
     companion object {
-        private val MIN_RESPONSE_TIME_SEC = ZERO
-        private val MAX_RESPONSE_TIME_SEC = valueOf(MAX_UNSCALED_CODE.toLong()).divideBy10()
+        private val MIN_RESPONSE_TIME_SEC_EXC = ZERO
+        private val MAX_RESPONSE_TIME_SEC_INC = valueOf(MAX_UNSCALED_CODE.toLong()).divideBy10()
 
         /**
          * Creation of response code using byte representation of code.
@@ -62,7 +62,13 @@ class IgmpMaxResponseCode private constructor(code: UByte) : IgmpMantExpCode(cod
          * @param responseCode byte representation of code
          * @return created [IgmpMaxResponseCode]
          */
-        fun createResponseCode(responseCode: UByte) = IgmpMaxResponseCode(responseCode)
+        fun createResponseCode(responseCode: UByte): IgmpMaxResponseCode {
+            require(responseCode != 0u.toUByte()) {
+                "IGMP Response Code cannot be set to 0. Allowed interval: " +
+                        "($MIN_RESPONSE_TIME_SEC_EXC, $MAX_RESPONSE_TIME_SEC_INC>"
+            }
+            return IgmpMaxResponseCode(responseCode)
+        }
 
         /**
          * Creation of response code by composition of 'mant' and 'ext' parts.
@@ -73,20 +79,23 @@ class IgmpMaxResponseCode private constructor(code: UByte) : IgmpMantExpCode(cod
          * @throws IllegalArgumentException value of [mant] does not fit <0, [MAX_MANT]> interval or
          * value of [exp] does not fit <0, [MAX_EXP]> interval
          */
-        fun createResponseCode(mant: UByte, exp: UByte) = IgmpMaxResponseCode(createCode(mant, exp))
+        fun createResponseCode(mant: UByte, exp: UByte): IgmpMaxResponseCode {
+            return IgmpMaxResponseCode(createCode(mant, exp))
+        }
 
         /**
          * Creation of response code without exponential part using provided number of seconds.
          *
          * @param seconds code represented by seconds
-         * @throws IllegalArgumentException provided seconds does not fit into interval <[MIN_RESPONSE_TIME_SEC],
-         * [MAX_RESPONSE_TIME_SEC]> or scale of [BigDecimal] is higher than 1
          * @return created [IgmpMaxResponseCode]
+         * @throws IllegalArgumentException provided seconds does not fit into interval ([MIN_RESPONSE_TIME_SEC_EXC],
+         * [MAX_RESPONSE_TIME_SEC_INC]> or scale of [BigDecimal] is higher than 1
          */
         fun createResponseCode(seconds: BigDecimal): IgmpMaxResponseCode {
             require(seconds.scale() <= 1) { "IGMP Response Code time scale must from the interval <0, 1> " }
-            require(seconds >= MIN_RESPONSE_TIME_SEC && seconds <= MAX_RESPONSE_TIME_SEC) {
-                "IGMP Response Code time must be from the interval <$MIN_RESPONSE_TIME_SEC, $MAX_RESPONSE_TIME_SEC>"
+            require(seconds > MIN_RESPONSE_TIME_SEC_EXC && seconds <= MAX_RESPONSE_TIME_SEC_INC) {
+                "IGMP Response Code time must be from the interval " +
+                        "($MIN_RESPONSE_TIME_SEC_EXC, $MAX_RESPONSE_TIME_SEC_INC>"
             }
             val value = seconds.multiplyWith10().toLong().toUByte()
             return IgmpMaxResponseCode(value)

@@ -46,8 +46,8 @@ import sk.jt.igmp.fabric.types.IgmpMantExpCode.Companion.MAX_MANT
 class IgmpQuerierQueryIntervalCode private constructor(code: UByte) : IgmpMantExpCode(code) {
 
     companion object {
-        private val MIN_INTERVAL_SEC = 0u
-        private val MAX_INTERVAL_SEC = 127u
+        private val MIN_INTERVAL_SEC_EXL = 0u
+        private val MAX_INTERVAL_SEC_INC = 127u
 
         /**
          * Creation of query interval code using byte representation of code.
@@ -55,7 +55,13 @@ class IgmpQuerierQueryIntervalCode private constructor(code: UByte) : IgmpMantEx
          * @param responseCode byte representation of code
          * @return created [IgmpQuerierQueryIntervalCode]
          */
-        fun createQueryIntervalCode(responseCode: UByte) = IgmpQuerierQueryIntervalCode(responseCode)
+        fun createQueryIntervalCode(responseCode: UByte): IgmpQuerierQueryIntervalCode {
+            require(responseCode != 0u.toUByte()) {
+                "IGMP Query Interval Code cannot be set to 0. Allowed interval: " +
+                        "(${MIN_INTERVAL_SEC_EXL}, ${MAX_INTERVAL_SEC_INC}>"
+            }
+            return IgmpQuerierQueryIntervalCode(responseCode)
+        }
 
         /**
          * Creation of query interval code by composition of 'mant' and 'ext' parts.
@@ -72,13 +78,13 @@ class IgmpQuerierQueryIntervalCode private constructor(code: UByte) : IgmpMantEx
          * Creation of query interval code without exponential part using provided number of seconds.
          *
          * @param seconds code represented by seconds
-         * @throws IllegalArgumentException provided seconds does not fit into interval <[MIN_INTERVAL_SEC],
-         * [MAX_INTERVAL_SEC]>
          * @return created [IgmpQuerierQueryIntervalCode]
+         * @throws IllegalArgumentException provided seconds does not fit into interval ([MIN_INTERVAL_SEC_EXL],
+         * [MAX_INTERVAL_SEC_INC]>
          */
         fun createQueryIntervalCodeFromSeconds(seconds: UByte): IgmpQuerierQueryIntervalCode {
-            require(seconds >= MIN_INTERVAL_SEC && seconds <= MAX_INTERVAL_SEC) {
-                "IGMP Response Code time must be from the interval <$MIN_INTERVAL_SEC, $MAX_INTERVAL_SEC>"
+            require(seconds > MIN_INTERVAL_SEC_EXL && seconds <= MAX_INTERVAL_SEC_INC) {
+                "IGMP Query Interval Code time must be from the interval ($MIN_INTERVAL_SEC_EXL, $MAX_INTERVAL_SEC_INC>"
             }
             return IgmpQuerierQueryIntervalCode(seconds)
         }

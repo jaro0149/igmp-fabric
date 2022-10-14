@@ -24,6 +24,7 @@
 package sk.jt.igmp.fabric.types
 
 import java.math.BigDecimal
+import java.math.BigDecimal.ZERO
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
@@ -57,6 +58,9 @@ internal class IgmpMaxResponseCodeTest {
         }
         assertThrows(IllegalArgumentException::class.java) {
             createResponseCode(BigDecimal("12.8"))
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            createResponseCode(ZERO)
         }
     }
 

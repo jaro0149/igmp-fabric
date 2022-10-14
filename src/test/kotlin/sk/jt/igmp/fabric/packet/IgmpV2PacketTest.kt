@@ -69,7 +69,6 @@ internal class IgmpV2PacketTest : IgmpPacketTest {
         assertEquals(LEAVE_GROUP, leaveGroup.type())
         assertEquals(0x06fa.toUShort(), leaveGroup.checksum())
         assertEquals(getByName("225.1.1.4"), leaveGroup.groupAddress())
-        assertEquals(0u.toUByte(), leaveGroup.maxResponseTime().value)
         assertTrue(leaveGroup.isValidChecksum())
     }
 
@@ -79,7 +78,6 @@ internal class IgmpV2PacketTest : IgmpPacketTest {
         assertEquals(IGMPV2_MEMBERSHIP_REPORT, membershipReport.type())
         assertEquals(0xfa04.toUShort(), membershipReport.checksum())
         assertEquals(getByName("239.255.255.250"), membershipReport.groupAddress())
-        assertEquals(0u.toUByte(), membershipReport.maxResponseTime().value)
         assertTrue(membershipReport.isValidChecksum())
     }
 
@@ -93,7 +91,7 @@ internal class IgmpV2PacketTest : IgmpPacketTest {
         assertEquals(LEAVE_GROUP, leaveGroup.type())
         assertEquals(0xf904.toUShort(), leaveGroup.checksum())
         assertEquals(groupAddress, leaveGroup.groupAddress())
-        assertEquals(0u.toUByte(), leaveGroup.maxResponseTime().value)
+        assertEquals(0u.toByte(), leaveGroup.buffer().getByte(1))
         assertTrue(leaveGroup.isValidChecksum())
     }
 
@@ -107,7 +105,7 @@ internal class IgmpV2PacketTest : IgmpPacketTest {
         assertEquals(IGMPV2_MEMBERSHIP_REPORT, membershipReport.type())
         assertEquals(0x09fe.toUShort(), membershipReport.checksum())
         assertEquals(groupAddress, membershipReport.groupAddress())
-        assertEquals(0u.toUByte(), membershipReport.maxResponseTime().value)
+        assertEquals(0u.toByte(), membershipReport.buffer().getByte(1))
         assertTrue(membershipReport.isValidChecksum())
     }
 

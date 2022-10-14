@@ -54,6 +54,9 @@ internal class IgmpQuerierQueryIntervalCodeTest {
         assertThrows(IllegalArgumentException::class.java) {
             createQueryIntervalCodeFromSeconds(200u)
         }
+        assertThrows(IllegalArgumentException::class.java) {
+            createQueryIntervalCodeFromSeconds(0u)
+        }
     }
 
     @Test

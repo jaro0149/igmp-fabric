@@ -26,8 +26,6 @@ package sk.jt.igmp.fabric.packet
 import java.net.Inet4Address
 import pcap.spi.PacketBuffer
 import sk.jt.igmp.fabric.packet.IgmpPacketUtils.Companion.toIpv4Address
-import sk.jt.igmp.fabric.types.IgmpResponseTime
-import sk.jt.igmp.fabric.types.IgmpResponseTime.Companion.createResponseTime
 
 /**
  * Generic representation of the IGMPv2 message. All IGMPv1 types contain group address, response time, type,
@@ -50,21 +48,6 @@ internal sealed class IgmpV2<out T : Igmp<T>>(buffer: PacketBuffer) : Igmp<T>(bu
 
     protected val responseTimeOffset = typeOffset + 1
     private val groupAddressOffset = checksumOffset + 2
-
-    /**
-     * The Max Response Time field is meaningful only in Membership Query
-     * messages, and specifies the maximum allowed time before sending a
-     * responding report in units of 1/10 second.  In all other messages, it
-     * is set to zero by the sender and ignored by receivers.
-     * Varying this setting allows IGMPv2 routers to tune the "leave
-     * latency" (the time between the moment the last host leaves a group
-     * and when the routing protocol is notified that there are no more
-     * members).  It also allows tuning of the burstiness of IGMP traffic
-     * on a subnet.
-     *
-     * @return [IgmpResponseTime]
-     */
-    fun maxResponseTime() = createResponseTime(superBuffer.getByte(responseTimeOffset).toUByte())
 
     /**
      * In a Membership Query message, the group address field is set to zero

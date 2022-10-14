@@ -39,13 +39,8 @@ import sk.jt.igmp.fabric.types.TypeUtils.Companion.multiplyWith10
 class IgmpResponseTime private constructor(val value: UByte) {
 
     companion object {
-        private val MIN_RESPONSE_TIME_SEC = ZERO
-        private val MAX_RESPONSE_TIME_SEC = valueOf(25.5)
-
-        /**
-         * Constant [IgmpResponseTime] with time set to 0.
-         */
-        val ZERO_RESPONSE_TIME = IgmpResponseTime(0u)
+        private val MIN_RESPONSE_TIME_SEC_EXC = ZERO
+        private val MAX_RESPONSE_TIME_SEC_INC = valueOf(25.5)
 
         /**
          * Creation of response time from byte field in the IGMP packet.
@@ -53,6 +48,10 @@ class IgmpResponseTime private constructor(val value: UByte) {
          * @return created [IgmpResponseTime]
          */
         fun createResponseTime(time: UByte): IgmpResponseTime {
+            require(time != 0u.toUByte()) {
+                "IGMP Response Time cannot be set to 0. Allowed interval: " +
+                        "(${MIN_RESPONSE_TIME_SEC_EXC}, ${MAX_RESPONSE_TIME_SEC_INC}>"
+            }
             return IgmpResponseTime(time)
         }
 
@@ -62,12 +61,12 @@ class IgmpResponseTime private constructor(val value: UByte) {
          * @param seconds number of seconds
          * @return created [IgmpResponseTime]
          * @throws IllegalArgumentException scale of the input [BigDecimal] is higher than 1 or provided value
-         * does not fit <[MIN_RESPONSE_TIME_SEC], [MAX_RESPONSE_TIME_SEC]> interval
+         * does not fit ([MIN_RESPONSE_TIME_SEC_EXC], [MAX_RESPONSE_TIME_SEC_INC]> interval
          */
         fun createResponseTime(seconds: BigDecimal): IgmpResponseTime {
             require(seconds.scale() <= 1) { "IGMP Response Time scale must be from the interval <0, 1> " }
-            require(seconds >= MIN_RESPONSE_TIME_SEC && seconds <= MAX_RESPONSE_TIME_SEC) {
-                "IGMP Response Time must be from the interval <$MIN_RESPONSE_TIME_SEC, $MAX_RESPONSE_TIME_SEC>"
+            require(seconds > MIN_RESPONSE_TIME_SEC_EXC && seconds <= MAX_RESPONSE_TIME_SEC_INC) {
+                "IGMP Response Time must be from the interval ($MIN_RESPONSE_TIME_SEC_EXC, $MAX_RESPONSE_TIME_SEC_INC>"
             }
             val value = seconds.multiplyWith10().toLong().toUByte()
             return IgmpResponseTime(value)
