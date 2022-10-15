@@ -71,7 +71,7 @@ internal interface IgmpPacketTest {
         private val HEX_OCTETS_PATTERN = Pattern.compile(" +(?<hex>[0-9a-f]{2})")
         private val PCAP_SERVICE = createPcapService()
 
-        private fun loadFileToPacketBuffer(fileName: String): PacketBuffer {
+        internal fun loadFileToPacketBuffer(fileName: String): PacketBuffer {
             val fileContent = File(fileName.toFilePath()).readText(Charsets.UTF_8)
             val bytes = parseByteArray(fileContent)
             val frame = PCAP_SERVICE.allocate(PacketBuffer::class.java).capacity(bytes.size.toLong())
